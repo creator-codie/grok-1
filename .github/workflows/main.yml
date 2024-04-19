@@ -147,4 +147,3 @@ Calling the `next` command from a prerelease branch will publish a prerelease, o
     # Delete an old comment. (pr-body)
     delete: # optional, default is false
           
-          
