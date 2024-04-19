@@ -1,0 +1,150 @@
+- name: Self Docker
+    steps:
+      - name: Checkout # Do not forget to checkout your repository ...
+        uses: actions/checkout@v3
+
+      - name: Build image
+        uses: NyuB/self-docker-action@1.0
+        with:
+          build-dir: ./images/dev-env # relative to root of repository
+          image-name: dev
+          image-tag: latest
+          dockerfile-path: ./images/Dockerfile # optional, (defaults to <build-dir>/Dockerfile)
+      
+      - name: Use image
+        run: docker run --rm dev:latest echo "BRAVO" # image available under <image-name>:<image-tag>
+
+		              - name: GitHub Repository Self-Approve Action
+  # You may pin to the exact commit or the version.
+  # uses: nicklegan/github-repo-self-approve-action@86495ef73587b7ebbda94ec221f814ddde1677ba
+  uses: nicklegan/github-repo-self-approve-action@v1.0.0
+  with:
+    # 
+    appid: 
+    # 
+    privatekey: 
+    # 
+    installationid: 
+
+		              - name: "AWS CodeBuild run build" Action For GitHub Actions - self hosted
+  # You may pin to the exact commit or the version.
+  # uses: raghavbijjula/aws-codebuild-run-build@cb834fad09a00292118ba9e62fed197c5b9fc068
+  uses: raghavbijjula/aws-codebuild-run-build@v0.0.4-beta
+  with:
+    # AWS CodeBuild Project Name
+    project-name: 
+    # Buildspec Override
+    buildspec-override: # optional
+    # The name of a compute type for this build that overrides the one specified in the build project.
+    compute-type-override: # optional
+    # A container type for this build that overrides the one specified in the build project.
+    environment-type-override: # optional
+    # The name of an image for this build that overrides the one specified in the build project.
+    image-override: # optional
+    # The type of credentials CodeBuild uses to pull images in your build.
+    image-pull-credentials-type-override: # optional
+    # Comma separated list of environment variables to send to CodeBuild
+    env-vars-for-codebuild: # optional
+    # How often the action calls the API for updates
+    update-interval: # optional
+    # Base back-off time for the update calls for API if rate-limiting is encountered
+    update-back-off: # optional
+    # Set to `true` if you want do disable source repo override
+    disable-source-override: # optional
+    # Set to `true` to prevent the CloudWatch logs from streaming the output to GitHub
+    hide-cloudwatch-logs: # optional
+    # Set to `true` if you want do disable github environment variables in codebuild
+    disable-github-env-vars: # optional
+
+             - name: Auto Action
+  # You may pin to the exact commit or the version.
+  # uses: terradatum/auto-action@1c8a04033340a363b9eb35092d59624e8df3b013
+  uses: terradatum/auto-action@v1.0.12
+  with:
+    # Choose one of the commands below.
+Setup Commands
+* info: Determine the environment and check if auto is set up correctly
+Pull Request Interaction Commands
+* label: Get the labels for a pull request. Doesn't do much, but the return value lets you write you own scripts based off of the PR labels! * comment: Comment on a pull request with a markdown message. Each comment has a context, and each context only has one comment. * pr-check: Check that a pull request has a SemVer label * pr-status: Set the status on a PR commit * pr-body: Update the body of a PR with a message. Appends to PR and will not overwrite user content. Each comment has a context, and each context only has one comment.
+Release Commands
+* version: Get the semantic version bump for the given changes. Requires all PRs to have labels for the change type. If a PR does not have a label associated with it, it will default to `patch`. * changelog: Prepend release notes to `CHANGELOG.md`, create one if it doesn't exist, and commit the changes. * release: Auto-generate a github release * shipit: Context aware publishing.
+        1. call from base branch -> latest version released (LATEST)
+        2. call from prerelease branch -> prerelease version released (NEXT)
+        3. call from PR in CI -> canary version released (CANARY)
+        4. call locally when not on base/prerelease branch -> canary version released (CANARY)
+* latest: Run the full `auto` release pipeline. Force a release to latest and bypass `shipit` safeguards. * canary: Make a canary release of the project. Useful on PRs. If ran locally, `canary` will release a canary version for your current git HEAD. This is ran automatically from "shipit".
+        1. In PR: 1.2.3-canary.123.0 + add version to PR body
+        2. Locally: 1.2.3-canary.1810cfd
+* next: Make a release for your "prerelease" release line. This is ran automatically from "shipit".
+        1. Creates a prerelease on package management platform
+        2. Creates a "Pre Release" on GitHub releases page.
+
+Calling the `next` command from a prerelease branch will publish a prerelease, otherwise it will publish to the default prerelease branch.
+
+    command: # optional, default is shipit
+    # The repo to set status on. Defaults to looking in the package definition for the platform. (global)
+    repo: # optional
+    # The owner of the GitHub repo. Defaults to reading from the package definition for the platform (global)
+    owner: # optional
+    # The url to GitHub Enterprise API (global)
+    github-api: # optional
+    # Plugins to load auto with. If running the binary distribution, the default plugin is 'git-tag', if running from 'node_modules', then it's 'npm'. (global)
+
+    plugins: # optional
+    # Report what a command will do but do not actually do anything. (changelog, release, shipit, latest, next, canary)
+    dry-run: # optional, default is false
+    # Branch to treat as the 'master' branch. (changelog, release, shipit, latest)
+    base-branch: # optional
+    # Tag to start the CHANGELOG notes from. Defaults to latest tag. (version, changelog, release)
+    from: # optional
+    # Make auto publish prerelease versions when merging to master. Only PRs merged with "release" label will generate a "latest" release. Only use this flag if you do not want to maintain a prerelease branch, and instead only want to use master. (shipit)
+
+    only-graduate-with-release-label: # optional, default is false
+    # Only bump version if 'release' label is on pull request. (version, shipit)
+    only-publish-with-release-label: # optional, default is true
+    # The name to use with git. Defaults to package definitions for the platform. (changelog, release)
+    name: # optional
+    # Git email to commit with. Defaults to package definition for the platform (changelog, release)
+    email: # optional
+    # Use the version as the tag without the 'v' prefix. WARNING: some plugins might need extra config to use this option (ex: npm). (changelog, release)
+
+    no-version-prefix: # optional, default is false
+    # Git revision (tag, commit sha, ...) to start release notes from. Defaults to latest tag. (changelog)
+    to: # optional
+    # Override the default title of the CHANGELOG entry.
+    title: # optional
+    # Depending on the command:
+  * changelog: message to commit to the changelog
+  * next: Message used when attaching the prerelease version to the PR
+  * canary: Message to comment on PR with for canary release
+  * pr-body: Message to post to PR Body
+  * comment: Message to post to comment
+
+    message: # optional
+    # The pull request the command should use. Detects PR number in CI (defaults to last merged PR). (canary, label, pr-status, pr-check, pr-body, comment)
+
+    pr: # optional
+    # Version number to publish as. Defaults to reading from the package definition for the platform. (release)
+    use-version: # optional
+    # Publish a prerelease. (release)
+    pre-release: # optional, default is false
+    # Build number to use to create the canary version. Detected in CI env. (canary)
+    build: # optional
+    # Force a canary release, even if the PR is marked to skip the release (canary)
+    force: # optional, default is false
+    # A string label to differentiate this status from others. (pr-status, pr-check, pr-body, comment)
+    context: # optional
+    # URL to associate with this status. (pr-status, pr-check)
+    url: # optional
+    # Specify a custom git sha. Defaults to the HEAD for a git repo in the current repository. (pr-status)
+    sha: # optional
+    # State of the PR. ['pending', 'success', 'error', 'failure']. (pr-status)
+    state: # optional
+    # A description of the status. (pr-status)
+    description: # optional
+    # Edit an old comment. (pr-body)
+    edit: # optional, default is false
+    # Delete an old comment. (pr-body)
+    delete: # optional, default is false
+          
+          
