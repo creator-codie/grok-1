@@ -2,19 +2,37 @@ name: Download Grok-1 Model Weights
 
 on: [push]
 
+env:
+  GROK_1_REPO_URL: https://github.com/xai-org/grok-1.git
+  GROK_1_MODEL_ID: xai-org/grok-1
+
 jobs:
   download-weights:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-    - name: Clone Grok-1 Repository
-      run: git clone https://github.com/xai-org/grok-1.git && cd grok-1
+
+    - name: Cache Grok-1 repository
+      uses: actions/cache@v2
+      with:
+        path: grok-1
+        key: ${{ runner.os }}-grok-1-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-grok-1-
+
+    - name: Clone Grok-1 Repository (if not cached)
+      if: steps.cache-grok-1.outputs.cache-hit != 'true'
+      run: git clone $GROK_1_REPO_URL && cd grok-1
+
     - name: Install huggingface_hub
       run: pip install huggingface_hub[hf_transfer]
+
     - name: Download Grok-1 Model Weights
-      run: huggingface-cli download xai-org/grok-1 --repo-type model --include ckpt-0/* --local-dir checkpoints --local-dir-use-symlinks False
+      run: |
+        huggingface-cli download $GROK_1_MODEL_ID --repo-type model --include ckpt-0/* --local-dir checkpoints --local-dir-use-symlinks False || { echo "Download failed"; exit 1; }
