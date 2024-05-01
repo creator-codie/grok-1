@@ -38,15 +38,6 @@ jobs:
         run: |
           pip install sphinx
           sphinx-build -b html docs/source docs/_build/html
-      - name: Deploy documentation
-        run: |
-          # Deploy the generated documentation to a server or hosting platform
-      - name: Send Slack notification
-        uses: slack/slack@v2
-        with:
-          slack-token: ${{ secrets.SLACK_TOKEN }}
-          channel: '#deployment-notifications'
-          text: 'Grok-1 deployment complete!'
       - name: Create GitHub release
         uses: actions/create-release@v1
         with:
@@ -54,26 +45,9 @@ jobs:
           release-name: 'Grok-1 Release'
           draft: false
           prerelease: false
-      - name: Post tweet
-        uses: twitter/action-tweet@v1
-        with:
-          twitter-token: ${{ secrets.TWITTER_TOKEN }}
-          tweet: 'Grok-1 has been released! Check it out: (link unavailable)'
-      - name: Send Microsoft Teams notification
-        uses: office365/teams@v1
-        with:
-          teams-token: ${{ secrets.TEAMS_TOKEN }}
-          channel: '#deployment-notifications'
-          text: 'Grok-1 deployment complete!'
       - name: Update README
         run: |
           echo "Grok-1 has been updated to version ${{ github.sha }}" >> README.md
           git add README.md
           git commit -m "Updated README"
           git push origin main
-      - name: Send Discord notification
-        uses: discord/webhook@v1
-        with:
-          discord-token: ${{ secrets.DISCORD_TOKEN }}
-          channel: '#deployment-notifications'
-          text: 'Grok-1 deployment complete!'
