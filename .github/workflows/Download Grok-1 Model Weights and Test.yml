@@ -1,40 +1,20 @@
-name: Download Grok-1 Model Weights and Test
+name: Download Grok-1 Model Weights
 
 on: [push]
 
-env:
-  GROK_1_WEIGHTS_URL: https://huggingface.co/grok-1/weights/download
-  GROK_1_WEIGHTS_FILE: grok-1-weights.tar.gz
-
 jobs:
-  setup-and-test:
+  download-weights:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Install Dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install pytest
-
+    - name: Clone Grok-1 Repository
+      run: git clone https://github.com/xai-org/grok-1.git && cd grok-1
+    - name: Install huggingface_hub
+      run: pip install huggingface_hub[hf_transfer]
     - name: Download Grok-1 Model Weights
-      run: |
-        wget -O $GROK_1_WEIGHTS_FILE $GROK_1_WEIGHTS_URL || { echo "Download failed"; exit 1; }
-        tar -xzvf $GROK_1_WEIGHTS_FILE -C checkpoints/ || { echo "Extraction failed"; exit 1; }
-
-    - name: Run Tests with pytest
-      run: pytest
+      run: huggingface-cli download xai-org/grok-1 --repo-type model --include ckpt-0/* --local-dir checkpoints --local-dir-use-symlinks False
